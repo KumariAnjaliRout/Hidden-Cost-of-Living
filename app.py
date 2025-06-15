@@ -48,7 +48,12 @@ plt.tight_layout()
 plt.show()
 
 # Pie Chart: Food vs. Rent
+# Strip column names of leading/trailing spaces
+df.columns = df.columns.str.strip()
+
+# Now drop safely
 total_food = df.drop(columns=["States/UTs", "Rent", "Total Expense"]).sum().sum()
+
 total_rent = df["Rent"].sum()
 
 plt.figure(figsize=(7, 7))
