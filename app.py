@@ -3,16 +3,33 @@ import pandas as pd
 
 st.title("📊 Hidden Cost of Living in Indian States")
 
+import streamlit as st
+import pandas as pd
+
+st.set_page_config(page_title="Hidden Cost of Living in Indian States", layout="wide")
+st.title("📊 Hidden Cost of Living in Indian States")
+
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Expense.csv")
-    df.columns = df.columns.str.strip()
-    
-    for col in df.columns[1:]:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-    
-    df = df.dropna(subset=["States/UTs"])
-    df["States/UTs"] = df["States/UTs"].astype(str)
+    try:
+        df = pd.read_csv("Expense.csv")
+        df.columns = df.columns.str.strip()
+        return df
+    except Exception as e:
+        st.error(f"Error loading CSV: {e}")
+        return pd.DataFrame()
+
+df = load_data()
+
+if df.empty:
+    st.warning("CSV is not loaded or is empty. Please upload 'Expense.csv' with correct data.")
+else:
+    st.success("Data loaded successfully!")
+    st.write(df.head())
+
+    option = st.sidebar.selectbox("Choose a Visualization", df.columns[1:].tolist())
+    st.write(f"You selected: {option}")
+
 
     numeric_cols = df.select_dtypes(include='number').columns
     df["Total Expense"] = df[numeric_cols].sum(axis=1)
