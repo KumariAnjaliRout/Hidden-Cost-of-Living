@@ -7,20 +7,21 @@ st.title("📊 Hidden Cost of Living in Indian States")
 def load_data():
     df = pd.read_csv("Expense.csv")
     df.columns = df.columns.str.strip()
+    
+    for col in df.columns[1:]:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    
+    df = df.dropna(subset=["States/UTs"])
+    df["States/UTs"] = df["States/UTs"].astype(str)
+
+    numeric_cols = df.select_dtypes(include='number').columns
+    df["Total Expense"] = df[numeric_cols].sum(axis=1)
+    df["Food Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense"]).sum(axis=1)
+    df["Daily Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense", "Food Expense"]).sum(axis=1)
+    df["Monthly Food+Essentials"] = df["Daily Expense"] * 30
+    df["Monthly Rent"] = df["Rent"]
+    df["Total Monthly Expense"] = df["Monthly Food+Essentials"] + df["Monthly Rent"]
+    df["Required Monthly Income"] = df["Total Monthly Expense"] * 1.25
+    df["Required Monthly Income (₹ Thousands)"] = (df["Required Monthly Income"] / 1000).round(2)
+
     return df
-
-df = load_data()
-
-st.dataframe(df)
-df["Total Expense"] = df.iloc[:, 1:].sum(axis=1)
-df["Food Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense"]).sum(axis=1)
-df["Required Monthly Income"] = (df["Total Expense"] * 1.25).round(2)
-
-st.write(df[["States/UTs", "Total Expense", "Food Expense", "Required Monthly Income"]])
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-top10 = df.sort_values(by="Total Expense", ascending=False).head(10)
-fig, ax = plt.subplots()
-sns.barplot(x="Total Expense", y="States/UTs", data=top10, ax=ax)
-st.pyplot(fig)
