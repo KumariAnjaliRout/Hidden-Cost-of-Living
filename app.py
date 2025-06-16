@@ -67,7 +67,7 @@ plt.show()
 # Rank States by Food Expense
 df["Food Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense"]).sum(axis=1)
 plt.figure(figsize=(14, 8))
-plt.barh(df_sorted['States/UTs'], df_sorted['Food Expense'], color='teal')
+plt.barh(df['States/UTs'], df['Food Expense'], color='teal')
 plt.xlabel('Total Food Expense (₹)')
 plt.ylabel('States/UTs')
 plt.title('States Ranked by Food Expense')
