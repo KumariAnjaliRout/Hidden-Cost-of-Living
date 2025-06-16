@@ -10,9 +10,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Streamlit Page Configuration
-st.set_page_config(page_title="Hidden Cost of Living in Indian States", layout="wide")
+st.set_page_config(
+    page_title="Hidden Cost of Living in Indian States",
+    layout="wide",
+    initial_sidebar_state="expanded"  # Sidebar opens by default
+)
 st.title("📊 Hidden Cost of Living in Indian States")
-
 st.markdown("""
 This dashboard analyzes the cost of essential commodities and rent across different Indian States and UTs. 
 
@@ -28,13 +31,11 @@ def load_data():
     df = df.dropna(subset=["States/UTs"])
     df["States/UTs"] = df["States/UTs"].astype(str)
 
-    # Food items (excluding Rent)
-    food_columns = df.columns.tolist()[1:-1]  # Excludes 'States/UTs' and 'Rent'
-    
     # Calculations
-    df["Food Expense"] = df[food_columns].sum(axis=1)
-    df["Total Expense"] = df["Food Expense"] + df["Rent"]
-    df["Monthly Food+Essentials"] = df["Food Expense"] * 30
+    df["Total Expense"] = df.iloc[:, 1:].sum(axis=1)
+    df["Food Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense"]).sum(axis=1)
+    df["Daily Expense"] = df.drop(columns=["States/UTs", "Rent", "Total Expense", "Food Expense"]).sum(axis=1)
+    df["Monthly Food+Essentials"] = df["Daily Expense"] * 30
     df["Monthly Rent"] = df["Rent"]
     df["Total Monthly Expense"] = df["Monthly Food+Essentials"] + df["Monthly Rent"]
     df["Required Monthly Income"] = df["Total Monthly Expense"] * 1.25
