@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"  # Sidebar opens by default
 )
-st.title("📊 Hidden Cost of Living in Indian States")
+st.title(" Hidden Cost of Living in Indian States")
 st.markdown("""
 This dashboard analyzes the cost of essential commodities and rent across different Indian States and UTs. 
 
@@ -114,5 +114,5 @@ elif option == "Required Monthly Income":
     st.pyplot(fig)
 
 # Data Table
-with st.expander("📂 View Raw Data"):
+with st.expander("View Raw Data"):
     st.dataframe(df_sorted)
